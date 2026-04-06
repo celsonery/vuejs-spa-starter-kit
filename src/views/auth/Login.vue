@@ -11,7 +11,7 @@
         </Button>
       </div>
       <Card class="w-full md:max-w-lg p-5 md:p-12 bg-transparent border-none">
-        <CardHeader>
+        <CardHeader class="text-center">
           <CardTitle>Entrar no sistema</CardTitle>
           <CardDescription>
             Use suas credenciais para entrar.
@@ -41,7 +41,7 @@
           </form>
         </CardContent>
         <CardFooter class="flex flex-col gap-2">
-          <Button class="w-full" :disabled="loading">{{ loading ? 'Entrando...' : 'Entrar' }}</Button>
+          <Button @click="handleLogin()" class="w-full" :disabled="loading">{{ loading ? 'Entrando...' : 'Entrar' }}</Button>
           <p v-if="error" class="text-red-500">{{ error }}</p>
         </CardFooter>
       </Card>
@@ -51,7 +51,7 @@
 
 <script setup>
 import {ref} from 'vue'
-import {useAuthStore} from '@/stores/auth'
+import {useAuthStore} from '@/stores/auth.ts'
 import {useRouter} from 'vue-router'
 import {useDark, useToggle} from "@vueuse/core"
 import {Sun, Moon} from 'lucide-vue-next'
