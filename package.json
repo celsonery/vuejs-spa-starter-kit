@@ -1,5 +1,5 @@
 {
-  "name": "app-shadcn",
+  "name": "Sindico",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,12 +10,16 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.2",
+    "@vueuse/core": "^14.2.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-vue-next": "^1.0.0",
+    "pinia": "^3.0.4",
+    "reka-ui": "^2.9.4",
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.2.2",
-    "vue": "^3.5.32"
+    "vue": "^3.5.32",
+    "vue-router": "^4.6.4"
   },
   "devDependencies": {
     "@types/node": "^24.12.2",
