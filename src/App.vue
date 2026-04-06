@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useDark } from '@vueuse/core'
 
-const isDark = useDark({
+useDark({
   selector: 'html',
   attribute: 'class',
   valueDark: 'dark',
