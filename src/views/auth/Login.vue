@@ -41,15 +41,14 @@
           </form>
         </CardContent>
         <CardFooter class="flex flex-col gap-2">
-          <Button @click="handleLogin()" class="w-full" :disabled="loading">{{ loading ? 'Entrando...' : 'Entrar' }}</Button>
-          <p v-if="error" class="text-red-500">{{ error }}</p>
+          <Button @click.prevent="handleLogin" class="w-full" :disabled="loading">{{ loading ? 'Entrando...' : 'Entrar' }}</Button>
         </CardFooter>
       </Card>
     </div>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {ref} from 'vue'
 import {useAuthStore} from '@/stores/auth.ts'
 import {useRouter} from 'vue-router'
@@ -66,47 +65,50 @@ import {
 import {Input} from '@/components/ui/input'
 import {Label} from '@/components/ui/label'
 import {Button} from '@/components/ui/button'
+import {toast} from 'vue-sonner'
 
 const auth = useAuthStore()
 const router = useRouter()
 
 const form = ref({email: '', password: ''})
 const loading = ref(false)
-const error = ref('')
 const isDark = useDark()
 
 const toggleDark = useToggle(isDark)
 
 const handleLogin = async () => {
-  loading.value = true
-  error.value = ''
+  auth.loading = true
+
   try {
     await auth.login(form.value)
     router.push('/dashboard')
-  } catch (error) {
+  } catch (error: any) {
     if (error.response) {
       const status = error.response.status;
       const serverMessage = error.response.data.message;
 
       switch (status) {
         case 401:
-          throw new Error('E-mail ou senha incorretos.');
+          toast.error('E-mail ou senha incorretos.', { duration: 5000 })
+          break;
         case 403:
-          throw new Error('Sua conta está suspensa ou sem permissão.');
+          toast.error('Sua conta está suspensa ou sem permissão.', { duration: 5000 })
+          break;
         case 422:
-          throw new Error('Dados inválidos. Verifique os campos.');
+          toast.error('Dados inválidos. Verifique os campos.', { duration: 5000 })
+          break;
         case 429:
-          throw new Error('Muitas tentativas. Tente novamente mais tarde.');
+          toast.error('Muitas tentativas. Tente novamente mais tarde.', { duration: 5000 })
+          break;
         default:
-          throw new Error(serverMessage || 'Ocorreu um erro inesperado.');
+          toast.error(serverMessage || 'Ocorreu um erro inesperado.', { duration: 5000 })
+          break;
       }
-    } else if (error.request) {
-      throw new Error('Não foi possível conectar ao servidor.');
     } else {
-      throw new Error('Erro ao configurar a requisição.');
+      toast.error('Erro de conexão com o servidor.', { duration: 5000 })
     }
   } finally {
-    loading.value = false
+    auth.loading = false
   }
 }
 </script>
