@@ -2,11 +2,11 @@
 import { Home, Settings } from 'lucide-vue-next'
 import {
   Sidebar,
+  SidebarHeader,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -14,7 +14,6 @@ import {
 import AppLogo from "@/components/AppLogo.vue";
 import UserProfile from "@/components/UserProfile.vue";
 
-// Menu items.
 const items = [
   { title: 'Dashboard', url: '/dashboard', icon: Home },
   { title: 'Settings', url: '/settings', icon: Settings },
@@ -22,12 +21,19 @@ const items = [
 </script>
 
 <template>
-  <Sidebar>
+  <Sidebar collapsible="icon">
+    <SidebarHeader>
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton size="lg" as-child class="justify-center">
+            <AppLogo />
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    </SidebarHeader>
+
     <SidebarContent>
       <SidebarGroup>
-        <SidebarGroupLabel class="justify-center p-9">
-          <AppLogo />
-        </SidebarGroupLabel>
         <SidebarGroupContent>
           <SidebarMenu>
             <SidebarMenuItem v-for="item in items" :key="item.title">
@@ -42,7 +48,7 @@ const items = [
         </SidebarGroupContent>
       </SidebarGroup>
     </SidebarContent>
-    <SidebarFooter class="border-t-1">
+    <SidebarFooter class="border-t">
       <UserProfile />
     </SidebarFooter>
   </Sidebar>
