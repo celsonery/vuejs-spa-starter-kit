@@ -1,0 +1,98 @@
+name: NodeJS with Vite
+
+on:
+  push:
+    branches: 
+      - develop
+      - main
+
+env:
+  IMAGE_NAME: ${{ github.event.repository.name }}
+  IMAGE_TAG: v${{ github.run_number }}
+
+jobs:
+  quality:
+    name: Quality Code
+    runs-on: ubuntu-latest
+    steps:
+      - uses: action/checkout@v6
+      
+      - name: Setup Node
+        uses: actions/setup-node@4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Lint test
+        run: |
+          npm insttall
+          npm test
+
+  sonar:
+    name: SonarQube
+    needs: quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+  build:
+    name: Buidl and Push Image
+    needs: sonar
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Build
+        run: |
+          npm install
+          npm run build
+
+      - name: Log in to Docker Registry
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login ${{ secrets.REGISTRY }} -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build Docker Image
+        run: docker tag ${{ secrets.REGISTRY }}/{{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} ${{ secrets.REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest
+
+      - name: Push Docker Image
+        run: |
+          docker push ${{ secrets.REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          docker push ${{ secrets.REGISTRY}}/${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest
+
+  deploy:
+    name: Deploy to Kubernetes
+    needs: build
+    runs-on: ubuntu-latest
+  
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: 'v1.33.3'
+      
+      - name: Configure Kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl -n apps set image deployment/${{ env.IMAGE_NAME }} ${{ env.IMAGE_NAME }}=${{ secrets.REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+
