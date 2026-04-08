@@ -25,7 +25,11 @@ const items = [
     <SidebarHeader>
       <SidebarMenu>
         <SidebarMenuItem>
-          <SidebarMenuButton size="lg" as-child class="justify-center">
+          <SidebarMenuButton
+            size="lg"
+            as-child
+            class="justify-center"
+          >
             <AppLogo />
           </SidebarMenuButton>
         </SidebarMenuItem>
@@ -36,7 +40,10 @@ const items = [
       <SidebarGroup>
         <SidebarGroupContent>
           <SidebarMenu>
-            <SidebarMenuItem v-for="item in items" :key="item.title">
+            <SidebarMenuItem
+              v-for="item in items"
+              :key="item.title"
+            >
               <SidebarMenuButton as-child>
                 <router-link :to="item.url">
                   <component :is="item.icon" />

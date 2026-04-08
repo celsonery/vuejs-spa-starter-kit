@@ -3,9 +3,19 @@
     {{ pageTitle }}
 
     <div class="absolute right-1.5 top-1.5">
-      <Button variant="outline" size="icon" @click="toggleDark()">
-        <Sun v-if="isDark" class="h-5 w-5"/>
-        <Moon v-else class="h-5 w-5"/>
+      <Button
+        variant="outline"
+        size="icon"
+        @click="toggleDark()"
+      >
+        <Sun
+          v-if="isDark"
+          class="h-5 w-5"
+        />
+        <Moon
+          v-else
+          class="h-5 w-5"
+        />
       </Button>
     </div>
   </div>

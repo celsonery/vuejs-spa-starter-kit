@@ -12,7 +12,7 @@ import AppSidebar from '@/components/AppSidebar.vue'
         <SidebarTrigger />
         <AppHeader />
       </header>
-      <router-view/>
+      <router-view />
     </SidebarInset>
   </SidebarProvider>
 </template>
