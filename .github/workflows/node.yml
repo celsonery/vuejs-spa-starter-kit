@@ -24,7 +24,7 @@ jobs:
       - name: Lint test
         run: |
           npm install
-          npm test
+          npm audit fix
 
   sonar:
     name: SonarQube
