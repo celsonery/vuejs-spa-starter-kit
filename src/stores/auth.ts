@@ -1,9 +1,16 @@
 import { defineStore } from 'pinia'
 import api from '@/services/api'
 
+interface LoginCredentials {
+    email: string
+    password: string
+}
+
 export const useAuthStore = defineStore('auth', {
     state: () => ({
-        token: localStorage.getItem('token') || null,
+        user: null,
+        token: localStorage.getItem('access_token') || null,
+        loading: false,
     }),
 
     getters: {
@@ -11,15 +18,14 @@ export const useAuthStore = defineStore('auth', {
     },
 
     actions: {
-        async login(credentials) {
+        async login(credentials: LoginCredentials) {
             try {
                 const {data} = await api.post('/auth/login', credentials)
-                console.log(data)
-                this.token = data.token
-                localStorage.setItem('token', data.token)
+                this.user = data.user
+                this.token = data.user.access_token
+                localStorage.setItem('access_token', data.user.access_token)
                 return true
             } catch (error) {
-                console.log(error)
                 throw error
             }
         },
@@ -27,9 +33,12 @@ export const useAuthStore = defineStore('auth', {
         async logout() {
             try {
                 await api.post('/auth/logout')
+            } catch (error) {
+                throw error
             } finally {
+                this.user = null
                 this.token = null
-                localStorage.removeItem('token')
+                localStorage.removeItem('access_token')
             }
         }
     }

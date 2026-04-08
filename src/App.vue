@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Toaster } from 'vue-sonner'
 import { useDark } from '@vueuse/core'
 
 const isDark = useDark({
@@ -11,4 +12,11 @@ const isDark = useDark({
 
 <template>
   <router-view />
+
+  <Toaster
+      position="top-right"
+      richColors
+      closeButton
+      :theme="isDark ? 'dark' : 'light'"
+  />
 </template>

@@ -1,17 +1,12 @@
 import {createRouter, createWebHistory} from 'vue-router'
-import {useAuthStore} from '@/stores/auth'
+import {useAuthStore} from '@/stores/auth.ts'
 import AppLayout from '@/components/AppLayout.vue'
-import Dashboard from '@/views/Dashboard.vue'
-import Settings from '@/views/Settings.vue'
-import Login from '@/views/auth/Login.vue'
-import MyAccount from '@/views/Application/MyAccount.vue'
-import ErrorNotFound from '@/views/ErrorNotFound.vue'
 
 const routes = [
     {
         path: '/login',
         name: 'login',
-        component: Login,
+        component: () => import('@/views/auth/Login.vue'),
         meta: {requiresAuth: false}
     },
     {
@@ -23,17 +18,17 @@ const routes = [
             {
                 path: '/dashboard',
                 name: 'dashboard',
-                component: Dashboard,
+                component: () => import('@/views/Dashboard.vue'),
                 meta: {title: 'Dashboard'}
             },
             {
                 path: '/settings',
-                component: Settings,
+                component: () => import('@/views/Settings.vue'),
                 meta: {title: 'Settings'}
             },
             {
                 path: '/account',
-                component: MyAccount,
+                component: () => import('@/views/Application/MyAccount.vue'),
                 meta: {title: 'Account'}
             },
         ]
@@ -41,7 +36,7 @@ const routes = [
     {
         path: '/:pathMatch(.*)*',
         name: 'not-found',
-        component: ErrorNotFound
+        component: () => import('@/views/ErrorNotFound.vue')
     }
 ]
 
@@ -50,7 +45,7 @@ const router = createRouter({
     routes,
 })
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to, _from, next) => {
     const auth = useAuthStore()
 
     if (to.meta.requiresAuth && !auth.isAuthenticated) {
