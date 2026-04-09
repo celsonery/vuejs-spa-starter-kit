@@ -2,6 +2,9 @@
 FROM node:current-alpine as build-stage
 WORKDIR /app
 COPY . .
+# Declara e expõe o ARG para o Vite
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
 RUN npm install --legacy-peer-deps
 RUN npm run build
 

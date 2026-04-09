@@ -14,9 +14,9 @@ const isDark = useDark({
   <router-view />
 
   <Toaster
-      position="top-right"
-      richColors
-      closeButton
-      :theme="isDark ? 'dark' : 'light'"
+    position="top-right"
+    rich-colors
+    close-button
+    :theme="isDark ? 'dark' : 'light'"
   />
 </template>
