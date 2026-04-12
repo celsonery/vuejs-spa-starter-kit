@@ -22,8 +22,17 @@
             <div class="grid w-full items-center gap-4">
               <div class="flex flex-col space-y-1.5">
                 <Label for="email">Email</Label>
-                <Input v-model="form.email" id="email" type="email" placeholder="E-mail" required :disabled="loading"/>
+                <Input
+                  id="email"
+                  v-model="form.email"
+                  type="email"
+                  placeholder="E-mail"
+                  autocomplete="email"
+                  required
+                  :disabled="auth.loading"
+                />
               </div>
+
               <div class="flex flex-col space-y-1.5">
                 <div class="flex items-center">
                   <Label for="password">Senha</Label>
@@ -34,14 +43,30 @@
                     Esqueceu sua senha?
                   </a>
                 </div>
-                <Input v-model="form.password" id="password" type="password" placeholder="Senha" required
-                       :disabled="loading"/>
+                <div class="relative">
+                    <Input 
+                      id="password"
+                      v-model="form.password"
+                      :type="showPassword ? 'text' : 'password'"
+                      placeholder="••••••••"
+                      autocomplete="current-password"
+                      required
+                      :disabled="auth.loading"
+                    />
+                    <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground" @click="showPassword = !showPassword">
+                      <Eye v-if="!showPassword" :size="18" />
+                      <EyeOff v-else :size="18" />
+                    </button>
+                </div>
               </div>
             </div>
           </form>
         </CardContent>
         <CardFooter class="flex flex-col gap-2">
-          <Button @click.prevent="handleLogin" class="w-full" :disabled="loading">{{ loading ? 'Entrando...' : 'Entrar' }}</Button>
+          <Button @click.prevent="handleLogin" class="w-full" :disabled="auth.loading">{{
+              auth.loading ? 'Entrando...' : 'Entrar'
+            }}
+          </Button>
         </CardFooter>
       </Card>
     </div>
@@ -49,11 +74,11 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue'
-import {useAuthStore} from '@/stores/auth.ts'
-import {useRouter} from 'vue-router'
-import {useDark, useToggle} from "@vueuse/core"
-import {Sun, Moon} from 'lucide-vue-next'
+import { ref, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import { useDark, useToggle } from "@vueuse/core"
+import { Sun, Moon, Eye, EyeOff } from 'lucide-vue-next'
 import {
   Card,
   CardContent,
@@ -62,26 +87,30 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import {Input} from '@/components/ui/input'
-import {Label} from '@/components/ui/label'
-import {Button} from '@/components/ui/button'
-import {toast} from 'vue-sonner'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
+import { toast } from 'vue-sonner'
+import type { LoginCredentials } from '@/types/auth'
 
-const auth = useAuthStore()
 const router = useRouter()
+const route = useRoute()
+const auth = useAuthStore()
 
-const form = ref({email: '', password: ''})
-const loading = ref(false)
+const form = ref<LoginCredentials>({ email: '', password: '' })
+const showPassword = ref<boolean>(false)
 const isDark = useDark()
-
 const toggleDark = useToggle(isDark)
 
-const handleLogin = async () => {
-  auth.loading = true
+const sessionExpired = computed<boolean>(() => route.query.expeired === '1')
+
+async function handleLogin(): Promise<void> {
+  if (auth.loading) return
 
   try {
     await auth.login(form.value)
-    router.push('/dashboard')
+    const redirect = (route.query.redirect as string | undefined) ?? '/dashboard'
+    await router.push(redirect)
   } catch (error: any) {
     if (error.response) {
       const status = error.response.status;

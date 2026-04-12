@@ -1,41 +1,43 @@
-import axios from 'axios'
+import axios, {
+  type AxiosInstance,
+  type InternalAxiosRequestConfig,
+  type AxiosResponse,
+  type AxiosError,
+} from 'axios'
+import {useAuthStore} from '@/stores/auth'
+import router from '@/router'
 
-const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
-    headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-    }
+const api: AxiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  },
 })
 
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('access_token')
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`
+// ── Request interceptor: injeta o Bearer token ─────────────────────────
+api.interceptors.request.use(
+  (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+    const auth = useAuthStore
+    if (auth.token) {
+      config.headers.Authorization = `Bearer ${auth.token}`
     }
     return config
-}, (error) => {
-    return Promise.reject(error)
-})
+  },
+  (error: AxiosError) => Promise.reject(error)
+)
 
+// ── Response interceptor: trata 401 globalmente ────────────────────────
 api.interceptors.response.use(
-    response => response,
-    error => {
-        if (!error.response) {
-            alert('Não foi possível conectar ao servidor!')
-            return Promise.reject(new Error('Servidor indisponível!'))
-        }
-
-        if (error.response.status === 502 || error.response.status === 503) {
-            console.log('Erro no servidor!')
-        }
-
-        if (error.response && error.response.status === 401) {
-            localStorage.removeItem('access_token');
-            window.location.href = '/login';
-        }
-        return Promise.reject(error)
+  (response: AxiosResponse) => response,
+  async (error: AxiosError) => {
+    if (error.response?.status === 401) {
+      const auth = useAuthStore()
+      auth.clearSession()
+      await  router.push({ name: 'login', query: { expired: '1' }})
     }
+    return Promise.reject(error)
+  }
 )
 
 export default api

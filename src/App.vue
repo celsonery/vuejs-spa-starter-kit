@@ -11,7 +11,7 @@ const isDark = useDark({
 </script>
 
 <template>
-  <router-view />
+  <RouterView />
 
   <Toaster
     position="top-right"
