@@ -36,20 +36,19 @@
               <div class="flex flex-col space-y-1.5">
                 <div class="flex items-center">
                   <Label for="password">Senha</Label>
-                  <a
-                      href="#"
-                      class="ml-auto inline-block text-sm underline"
+                  <Button variant="link"
+                      @click.prevent="forgotPassword"
+                      class="ml-auto inline-block text-sm underline cursor-pointer"
                   >
                     Esqueceu sua senha?
-                  </a>
+                  </Button>
                 </div>
                 <div class="relative">
-                    <Input 
+                    <Input
                       id="password"
                       v-model="form.password"
                       :type="showPassword ? 'text' : 'password'"
                       placeholder="••••••••"
-                      autocomplete="current-password"
                       required
                       :disabled="auth.loading"
                     />
@@ -103,6 +102,11 @@ const isDark = useDark()
 const toggleDark = useToggle(isDark)
 
 const sessionExpired = computed<boolean>(() => route.query.expeired === '1')
+
+
+async function forgotPassword(): Promise<void> {
+  await router.push({ name: 'forgot-password'})
+}
 
 async function handleLogin(): Promise<void> {
   if (auth.loading) return
