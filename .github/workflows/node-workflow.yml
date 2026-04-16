@@ -48,7 +48,7 @@ jobs:
     needs: quality
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       
@@ -61,6 +61,9 @@ jobs:
     name: Build Docker Image
     needs: security
     runs-on: ubuntu-latest
+    env:
+      API_URL: ${{ github.ref_name == 'main' && 'https://api-sind.oregon.net.br/api/v1/' || 'https://apidev-sind.oregon.net.br/api/v1/' }}
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -78,6 +81,7 @@ jobs:
           context: .
           file: docker/dockerfile
           push: true
+          build-args: VITE_API_URL=${{ env.API_URL }}
           tags: |
             ${{ secrets.REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
           
@@ -85,8 +89,6 @@ jobs:
     name: Deploy to Kubernetes
     needs: build-and-push
     runs-on: ubuntu-latest
-    environment:
-      name: ${{ github.ref_name == 'main' && 'production' || 'develop' }}
 
     steps:
       - name: Set up Kubectl
