@@ -169,7 +169,7 @@ async function handleSubmit(): Promise<void> {
     toast.success(response.message || 'Senha redefinida com sucesso!')
   } catch (err: any) {
     const status = err.response?.status
-    const message = err.response?.data?.message
+    const serverMessage = err.response?.data?.message
 
     if (status === 422) {
       const errors = err.response?.data?.errors
@@ -178,7 +178,7 @@ async function handleSubmit(): Promise<void> {
     } else if (status === 400) {
       toast.error('Token inválido ou expirado. Solicite um novo link.')
     } else {
-      toast.error(message || 'Não foi possível redefinir a senha.')
+      toast.error(serverMessage || 'Não foi possível redefinir a senha.')
     }
   } finally {
     auth.loading = false
