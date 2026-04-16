@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useAuthStore } from '@/stores/auth.ts'
+import { useAuthStore } from '@/stores/auth'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 import { BadgeCheck, Bell, ChevronsUpDown, LogOut, Sparkles } from 'lucide-vue-next'
@@ -54,7 +54,7 @@ const handlerLogout = async () => {
               class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
           >
             <Avatar class="h-8 w-8 rounded-full">
-              <AvatarImage :src="user.avatar" :alt="user.name" loading="lazy" />
+              <!-- <AvatarImage :src="user.avatar" :alt="user.name" loading="lazy" /> -->
               <AvatarFallback class="rounded-full bg-blue-600 text-white font-bold text-xs">
                 {{ userInitials }}
               </AvatarFallback>
@@ -78,7 +78,7 @@ const handlerLogout = async () => {
           <!-- Cabeçalho com info do usuário -->
           <div class="flex items-center gap-2 px-2 py-2">
             <Avatar class="h-9 w-9 rounded-full">
-              <AvatarImage :src="user.avatar" :alt="user.name" loading="lazy" />
+              <!-- <AvatarImage :src="user.avatar" :alt="user.name" loading="lazy" /> -->
               <AvatarFallback class="rounded-full bg-blue-600 text-white font-bold text-xs">
                 {{ userInitials }}
               </AvatarFallback>
