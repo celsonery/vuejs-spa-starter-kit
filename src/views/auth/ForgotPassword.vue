@@ -107,14 +107,14 @@ async function handleSubmit(): Promise<void> {
     toast.success(response.message || 'E-mail de recuperação enviado!')
   } catch (err: any) {
     const status = err.response?.status
-    const message = err.response?.data?.message
+    const serverMessage = err.response?.data?.message
 
     if (status === 422) {
       toast.error('Informe um e-mail válido.')
     } else if (status === 429) {
       toast.error('Muitas tentativas. Tente novamente mais tarde.')
     } else {
-      toast.error(message || 'Não foi possível enviar o e-mail.')
+      toast.error(serverMessage || 'Não foi possível enviar o e-mail.')
     }
   } finally {
     auth.loading = false

@@ -118,9 +118,6 @@ const verifying = ref<boolean>(false)
 const resending = ref<boolean>(false)
 const verified = ref<boolean>(false)
 
-// O Laravel envia o link assinado completo para o e-mail do usuário.
-// O frontend apenas apresenta a URL e o backend valida a assinatura.
-// Ex: /email/verify?id=1&hash=xxx&expires=xxx&signature=xxx
 onMounted(async () => {
   const id        = route.query.id as string | undefined
   const hash      = route.query.hash as string | undefined
@@ -146,13 +143,13 @@ async function verifyEmail(
 
     await AuthService.verifyEmail(id, hash, params.toString())
 
-    // Atualiza o usuário na store para refletir email_verified_at
     await auth.fetchUser()
 
     verified.value = true
     toast.success('E-mail verificado com sucesso!')
-  } catch (err: any) {
-    const status = err.response?.status
+  } catch (error: any) {
+    const status = error.response?.status
+    
     if (status === 403) {
       toast.error('Link de verificação inválido ou expirado.')
     } else if (status === 401) {

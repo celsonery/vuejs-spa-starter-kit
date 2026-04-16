@@ -53,7 +53,7 @@ const routes: RouteRecordRaw[] = [
     path: '/reset-password',
     name: 'reset-password',
     component: () => import('@/views/auth/ResetPassword.vue'),
-    meta: { guest: true },
+    meta: { guest: false },
   },
   {
     // Laravel envia o link: /email/verify?id=...&hash=...&expires=...&signature=...
