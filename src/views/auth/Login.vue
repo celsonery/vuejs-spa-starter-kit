@@ -3,7 +3,7 @@
     <div class="flex w-full sm:w-1/2 h-20 sm:h-dvh bg-blue-950 justify-center items-center">
       Imagem
     </div>
-    <div class="flex w-full sm:w-1/2 flex-col h-dvh bg-gray-100 dark:bg-neutral-900 justify-center items-center">
+    <div class="flex w-full sm:w-1/2 flex-col h-dvh bg-gray-100 dark:bg-neutral-950 justify-center items-center">
       <div class="absolute top-5 right-5">
         <Button variant="outline" size="icon" @click="toggleDark()">
           <Sun v-if="isDark" class="h-5 w-5"/>
@@ -11,7 +11,7 @@
         </Button>
       </div>
 
-      <Card class="w-full md:max-w-lg px-2 py-10 dark:bg-neutral-950 border-none shadow-lg">
+      <Card class="w-full md:max-w-lg px-2 py-10 dark:bg-black border-none shadow-lg">
 
         <CardHeader class="text-center">
           <CardTitle>Entrar no sistema</CardTitle>
@@ -82,7 +82,7 @@
         </CardContent>
 
         <CardFooter class="flex flex-col gap-4">
-          <Alert class="bg-gray-100 dark:bg-neutral-900">
+          <Alert class="bg-gray-100 dark:bg-neutral-950">
             <Shield color="orange" />
             <AlertTitle>ACESSO RESTRITO</AlertTitle>
             <AlertDescription>
